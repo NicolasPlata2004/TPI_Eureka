@@ -129,15 +129,22 @@ export default function Home() {
               <video
                 ref={videoRef}
                 src="/manim/AritmeticaAlgebra.mp4"
-                poster="/manim/AritmeticaAlgebraCover.png"
                 muted
                 loop
                 playsInline
                 className="w-full h-full object-cover"
               />
 
+              {/* Portada estática que cubre el video cuando no hay hover. 
+                  Esto permite pausar y reanudar el video en el mismo segundo. */}
+              <img 
+                src="/manim/AritmeticaAlgebraCover.png"
+                alt="Portada"
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0 z-10"
+              />
+
               {/* Botón Play - Se desvanece al hacer hover (cuando el video se reproduce) */}
-              <div className="absolute bottom-5 left-5 w-12 h-12 rounded-full bg-white flex items-center justify-center group-hover:opacity-0 group-hover:scale-75 transition-all shadow-md pointer-events-none">
+              <div className="absolute bottom-5 left-5 w-12 h-12 rounded-full bg-white flex items-center justify-center group-hover:opacity-0 group-hover:scale-75 transition-all shadow-md pointer-events-none z-20">
                 <div className="w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-l-[12px] border-l-tinta ml-1" />
               </div>
             </div>
