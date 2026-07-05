@@ -259,7 +259,7 @@ export default function Dashboard() {
                 </p>
               </div>
               <button
-                onClick={() => router.push(`/leccion/${nextChallenge.leccionId}`)}
+                onClick={() => router.push(`/reto/${nextChallenge.id}`)}
                 className="h-10 w-full rounded-xl bg-white text-blue-action text-xs font-bold hover:bg-bg-soft1 active:scale-95 transition-all shadow-sm cursor-pointer"
               >
                 Continuar ahora

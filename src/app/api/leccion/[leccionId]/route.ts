@@ -1,5 +1,6 @@
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { getLeccionById, getRetosByLeccionId } from '@/lib/db';
+import { getLeccionById, getRetosByLeccionId, getDb } from '@/lib/db';
 
 export async function GET(
   request: Request,
@@ -14,10 +15,28 @@ export async function GET(
     }
 
     const retos = getRetosByLeccionId(leccionId);
+    let nextRetoId = retos.length > 0 ? retos[0].id : null;
+
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get('eureka_session')?.value;
+    
+    if (sessionId) {
+      const db = getDb();
+      const completedRetos = new Set(
+        db.attempts
+          .filter((a) => a.userId === sessionId && a.passed)
+          .map((a) => a.retoId)
+      );
+      const uncompletedReto = retos.find(r => !completedRetos.has(r.id));
+      if (uncompletedReto) {
+        nextRetoId = uncompletedReto.id;
+      }
+    }
 
     return NextResponse.json({
       leccion,
-      retos
+      retos,
+      nextRetoId
     });
   } catch (error) {
     return NextResponse.json({ error: 'Error del servidor' }, { status: 500 });

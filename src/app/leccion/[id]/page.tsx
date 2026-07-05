@@ -28,6 +28,7 @@ export default function LeccionPage({ params }: PageProps) {
   const { id } = use(params);
   const [leccion, setLeccion] = useState<Leccion | null>(null);
   const [retos, setRetos] = useState<Reto[]>([]);
+  const [nextRetoId, setNextRetoId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Estados del reproductor de video
@@ -47,6 +48,7 @@ export default function LeccionPage({ params }: PageProps) {
         const data = await res.json();
         setLeccion(data.leccion);
         setRetos(data.retos);
+        setNextRetoId(data.nextRetoId || (data.retos.length > 0 ? data.retos[0].id : null));
       } catch (err) {
         console.error('Error fetching lesson:', err);
       } finally {
@@ -99,7 +101,9 @@ export default function LeccionPage({ params }: PageProps) {
   };
 
   const handleIrReto = () => {
-    if (retos.length > 0) {
+    if (nextRetoId) {
+      router.push(`/reto/${nextRetoId}`);
+    } else if (retos.length > 0) {
       router.push(`/reto/${retos[0].id}`);
     } else {
       router.push('/dashboard');
