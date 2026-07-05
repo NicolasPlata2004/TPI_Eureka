@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 
@@ -59,6 +59,7 @@ const testimonials = [
 export default function Home() {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const irDashboard = () => {
     router.push('/auth/dev-login');
@@ -111,38 +112,33 @@ export default function Home() {
           <div className="md:col-span-6 flex flex-col gap-3">
             <div
               onClick={() => {
-                if (!isPlaying) {
-                  setIsPlaying(true);
-                  // En una app real cargaría el video, aquí simulamos e invitamos a entrar
-                  setTimeout(() => {
-                    router.push('/auth/dev-login');
-                  }, 1200);
+                router.push('/auth/dev-login');
+              }}
+              onMouseEnter={() => {
+                if (videoRef.current) {
+                  videoRef.current.play().catch(() => {});
                 }
               }}
-              className="aspect-video w-full rounded-2xl bg-tinta relative overflow-hidden flex flex-col items-center justify-center cursor-pointer border border-tinta/10 group shadow-md"
+              onMouseLeave={() => {
+                if (videoRef.current) {
+                  videoRef.current.pause();
+                }
+              }}
+              className="aspect-video w-full rounded-2xl bg-tinta relative overflow-hidden flex flex-col items-center justify-center cursor-pointer border border-tinta/10 group shadow-md transition-transform duration-300 hover:scale-[1.03]"
             >
-              {/* Grid de fondo abstracto de Manim */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(47,109,181,0.15),rgba(255,255,255,0))]" />
-              <div className="absolute inset-0 bg-repeating-linear-gradient(45deg,rgba(255,255,255,0.015) 0 10px,transparent 10px 20px)" />
-              
-              <div className="z-10 flex flex-col items-center gap-4 text-center px-6">
-                <span className="text-2xl md:text-4xl font-semibold text-bg-soft2 tracking-wider font-mono group-hover:scale-105 transition-transform duration-300">
-                  {isPlaying ? 'Cargando lección...' : '2x + 3 = 11'}
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {isPlaying 
-                    ? '[ abriendo entorno de aprendizaje... ]' 
-                    : '[ video manim · la balanza de ecuaciones · 4:32 ]'}
-                </span>
-              </div>
+              <video
+                ref={videoRef}
+                src="/manim/AritmeticaAlgebra.mp4"
+                poster="/manim/AritmeticaAlgebraCover.png"
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
 
-              {/* Botón Play */}
-              <div className="absolute bottom-5 left-5 w-12 h-12 rounded-full bg-white flex items-center justify-center group-hover:scale-110 active:scale-95 transition-all shadow-md">
-                {isPlaying ? (
-                  <div className="w-4 h-4 border-2 border-tinta border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <div className="w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-l-[12px] border-l-tinta ml-1" />
-                )}
+              {/* Botón Play - Se desvanece al hacer hover (cuando el video se reproduce) */}
+              <div className="absolute bottom-5 left-5 w-12 h-12 rounded-full bg-white flex items-center justify-center group-hover:opacity-0 group-hover:scale-75 transition-all shadow-md pointer-events-none">
+                <div className="w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-l-[12px] border-l-tinta ml-1" />
               </div>
             </div>
             
